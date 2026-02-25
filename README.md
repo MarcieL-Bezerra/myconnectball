@@ -26,7 +26,7 @@ Um jogo casual onde o objetivo é conectar pares de bolas coloridas sem cruzar o
 2. Abra o arquivo `index.html` em seu navegador.
 
 ## Créditos
-Desenvolvido por [Seu Nome].
+Desenvolvido por Marciel Bezerra.
 
 ## Licença
 Este projeto é livre para uso e modificação.
