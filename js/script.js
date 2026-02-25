@@ -43,6 +43,15 @@ const levels = config.map(conf => {
 let currentLevelIdx = 0;
 let cellSize, gridN, dots, paths, isDrawing, currentColor;
 let drawPoints; // Para armazenar pontos reais do mouse
+let attempts = 0;
+let maxAttempts = 0;
+
+function updateAttemptsDisplay() {
+  const attemptsDisplay = document.getElementById('attempts-display');
+  if (attemptsDisplay) {
+    attemptsDisplay.innerText = `Tentativas: ${attempts}/${maxAttempts}`;
+  }
+}
 
 function initLevel() {
   const level = levels[currentLevelIdx];
@@ -54,8 +63,11 @@ function initLevel() {
   isDrawing = false;
   currentColor = null;
   drawPoints = [];
+  maxAttempts = Object.keys(dots).length;
+  attempts = 0;
   levelDisplay.innerText = `Fase ${currentLevelIdx + 1} (${gridN}x${gridN})`;
   messageDisplay.innerText = "Conecte as cores!";
+  updateAttemptsDisplay();
   draw();
 }
 
@@ -125,6 +137,14 @@ function checkWin() {
   }, 100);
 }
 
+function segmentsIntersect(a1, a2, b1, b2) {
+  // Retorna true se os segmentos a1-a2 e b1-b2 se cruzam
+  function ccw(p1, p2, p3) {
+    return (p3[1] - p1[1]) * (p2[0] - p1[0]) > (p2[1] - p1[1]) * (p3[0] - p1[0]);
+  }
+  return (ccw(a1, b1, b2) !== ccw(a2, b1, b2)) && (ccw(a1, a2, b1) !== ccw(a1, a2, b2));
+}
+
 function handleInput(e) {
   const rect = canvas.getBoundingClientRect();
   const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
@@ -149,14 +169,47 @@ function handleInput(e) {
       const dx = x - last[0];
       const dy = y - last[1];
       if (Math.sqrt(dx*dx + dy*dy) > 2) {
-        paths[currentColor].push([x, y]);
+        let intersects = false;
+        for (let otherColor in paths) {
+          if (otherColor === currentColor) continue;
+          const pts = paths[otherColor];
+          for (let i = 1; i < pts.length; i++) {
+            if (segmentsIntersect(last, [x, y], pts[i-1], pts[i])) {
+              intersects = true;
+              break;
+            }
+          }
+          if (intersects) break;
+        }
+        if (!intersects) {
+          paths[currentColor].push([x, y]);
+        } else {
+          // Caminho cruzou, perde tentativa
+          isDrawing = false;
+          attempts++;
+          updateAttemptsDisplay();
+          messageDisplay.innerText = "Caminho cruzou! -1 tentativa";
+          draw();
+          setTimeout(() => {
+            paths[currentColor] = [];
+            messageDisplay.innerText = "Conecte as cores!";
+            draw();
+            if (attempts >= maxAttempts) {
+              messageDisplay.innerText = "Game Over! Reiniciando...";
+              setTimeout(() => {
+                currentLevelIdx = 0;
+                initLevel();
+              }, 2000);
+            }
+          }, 2000);
+        }
       }
     }
   } else if (e.type === 'mouseup' || e.type === 'touchend') {
     isDrawing = false;
     checkWin();
   }
-  draw();
+  if (attempts < maxAttempts) draw();
 }
 
 canvas.addEventListener('mousedown', handleInput);
