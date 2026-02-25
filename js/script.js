@@ -17,27 +17,47 @@ const config = [
 ];
 
 const levels = config.map(conf => {
-  // Cria todas as coordenadas possíveis para este grid
-  let positions = [];
-  for (let r = 0; r < conf.grid; r++) {
-    for (let c = 0; c < conf.grid; c++) {
-      positions.push([r, c]);
+  let grid = conf.grid;
+  let colors = conf.colors;
+  // Gera posições laterais (bordas)
+  let lateralPositions = [];
+  for (let i = 0; i < grid; i++) {
+    lateralPositions.push([0, i]); // topo
+    lateralPositions.push([grid-1, i]); // base
+    lateralPositions.push([i, 0]); // esquerda
+    lateralPositions.push([i, grid-1]); // direita
+  }
+  // Remove duplicatas das bordas
+  lateralPositions = lateralPositions.filter((pos, idx, arr) => arr.findIndex(p => p[0] === pos[0] && p[1] === pos[1]) === idx);
+
+  // Gera posições centrais (não borda)
+  let centralPositions = [];
+  for (let r = 1; r < grid-1; r++) {
+    for (let c = 1; c < grid-1; c++) {
+      centralPositions.push([r, c]);
     }
   }
 
-  // Embaralha as posições (Fisher-Yates)
-  for (let i = positions.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [positions[i], positions[j]] = [positions[j], positions[i]];
+  // Embaralha as posições
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  shuffle(lateralPositions);
+  shuffle(centralPositions);
+
+  const dots = {};
+  // Primeira cor fica nas laterais
+  dots[colors[0]] = [lateralPositions.pop(), lateralPositions.pop()];
+  // Demais cores ficam no centro
+  for (let i = 1; i < colors.length; i++) {
+    dots[colors[i]] = [centralPositions.pop(), centralPositions.pop()];
   }
 
-  // Alimenta os dots retirando as posições do array embaralhado
-  const dots = {};
-  conf.colors.forEach(color => {
-    dots[color] = [positions.pop(), positions.pop()];
-  });
-
-  return { grid: conf.grid, dots };
+  return { grid, dots };
 });
 
 let currentLevelIdx = 0;
