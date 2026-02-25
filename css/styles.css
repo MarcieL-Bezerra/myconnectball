@@ -3,7 +3,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
   background-color: #1a1a1a;
   color: white;
@@ -14,23 +14,57 @@ h1 {
   margin-bottom: 10px;
 }
 
+.game-header {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#vidas-display {
+  margin-top: 8px;
+  font-size: 2rem;
+  display: flex;
+  gap: 4px;
+  min-height: 2.2rem;
+}
+
 #game-container {
   position: relative;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  touch-action: none; /* Importante para mobile */
+  touch-action: none;
+  max-width: 420px;
+  width: 100vw;
+  height: auto;
+  display: flex;
+  justify-content: center;
 }
 
 canvas {
   display: block;
   cursor: crosshair;
+  max-width: 100%;
+  height: auto;
+}
+
+.game-footer {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .status {
   margin-top: 15px;
   font-size: 1.2rem;
   font-weight: bold;
+  text-align: center;
 }
 
 #btn-reset {
@@ -41,4 +75,20 @@ canvas {
   border: none;
   color: white;
   border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+#btn-reset:hover {
+  background: #c0392b;
+}
+
+@media (max-width: 600px) {
+  .game-header, .game-footer, #game-container {
+    max-width: 98vw;
+  }
+  canvas {
+    max-width: 98vw;
+  }
 }

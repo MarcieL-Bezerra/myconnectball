@@ -53,6 +53,20 @@ function updateAttemptsDisplay() {
   }
 }
 
+function updateVidasDisplay() {
+  const vidasDisplay = document.getElementById('vidas-display');
+  if (vidasDisplay) {
+    let hearts = '';
+    for (let i = 0; i < maxAttempts - attempts; i++) {
+      hearts += '❤️';
+    }
+    for (let i = 0; i < attempts; i++) {
+      hearts += '<span style="opacity:0.2">❤️</span>';
+    }
+    vidasDisplay.innerHTML = hearts;
+  }
+}
+
 function initLevel() {
   const level = levels[currentLevelIdx];
   gridN = level.grid;
@@ -67,7 +81,7 @@ function initLevel() {
   attempts = 0;
   levelDisplay.innerText = `Fase ${currentLevelIdx + 1} (${gridN}x${gridN})`;
   messageDisplay.innerText = "Conecte as cores!";
-  updateAttemptsDisplay();
+  updateVidasDisplay();
   draw();
 }
 
@@ -184,11 +198,11 @@ function handleInput(e) {
         if (!intersects) {
           paths[currentColor].push([x, y]);
         } else {
-          // Caminho cruzou, perde tentativa
+          // Caminho cruzou, perde vida
           isDrawing = false;
           attempts++;
-          updateAttemptsDisplay();
-          messageDisplay.innerText = "Caminho cruzou! -1 tentativa";
+          updateVidasDisplay();
+          messageDisplay.innerText = "Caminho cruzou! -1 vida";
           draw();
           setTimeout(() => {
             paths[currentColor] = [];
@@ -196,6 +210,7 @@ function handleInput(e) {
             draw();
             if (attempts >= maxAttempts) {
               messageDisplay.innerText = "Game Over! Reiniciando...";
+              updateVidasDisplay();
               setTimeout(() => {
                 currentLevelIdx = 0;
                 initLevel();

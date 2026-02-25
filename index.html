@@ -7,14 +7,18 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <h1>Connect Ball</h1>
-  <div id="level-display" class="status">Fase 1</div>
+  <div class="game-header">
+    <h1>Connect Ball</h1>
+    <div id="level-display" class="status">Fase 1</div>
+    <div id="vidas-display" class="vidas"></div>
+  </div>
   <div id="game-container">
     <canvas id="gameCanvas"></canvas>
   </div>
-  <button id="btn-reset">Reiniciar Fase</button>
-  <div class="status" id="message">Conecte as cores sem cruzar!</div>
-  <div class="status" id="attempts-display">Tentativas: 0/0</div>
+  <div class="game-footer">
+    <button id="btn-reset">Reiniciar Fase</button>
+    <div class="status" id="message">Conecte as cores sem cruzar!</div>
+  </div>
   <script src="js/script.js"></script>
 </body>
 </html>
