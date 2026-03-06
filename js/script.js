@@ -181,8 +181,15 @@ function segmentsIntersect(a1, a2, b1, b2) {
 
 function handleInput(e) {
   const rect = canvas.getBoundingClientRect();
-  const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-  const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+  let x, y;
+  if (e.touches) {
+    x = e.touches[0].clientX - rect.left;
+    y = e.touches[0].clientY - rect.top;
+    e.preventDefault(); // Evita scroll durante o jogo
+  } else {
+    x = e.clientX - rect.left;
+    y = e.clientY - rect.top;
+  }
   if (e.type === 'mousedown' || e.type === 'touchstart') {
     for (let color in dots) {
       for (let p of dots[color]) {
@@ -199,6 +206,7 @@ function handleInput(e) {
     }
   } else if (isDrawing && (e.type === 'mousemove' || e.type === 'touchmove')) {
     if (currentColor) {
+      if (e.touches) e.preventDefault(); // Evita scroll durante o jogo
       const last = paths[currentColor][paths[currentColor].length - 1];
       const dx = x - last[0];
       const dy = y - last[1];
