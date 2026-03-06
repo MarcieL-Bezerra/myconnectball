@@ -261,5 +261,6 @@ window.addEventListener('mouseup', handleInput);
 canvas.addEventListener('touchstart', handleInput);
 canvas.addEventListener('touchmove', handleInput);
 canvas.addEventListener('touchend', handleInput);
+window.addEventListener('touchend', handleInput); // Garante touchend fora do canvas
 btnReset.onclick = initLevel;
 initLevel();
