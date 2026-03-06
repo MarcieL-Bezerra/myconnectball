@@ -225,6 +225,17 @@ function handleInput(e) {
         }
         if (!intersects) {
           paths[currentColor].push([x, y]);
+          // Verifica se chegou na segunda bola
+          for (let p of dots[currentColor]) {
+            const cx = p[0] * cellSize + cellSize/2;
+            const cy = p[1] * cellSize + cellSize/2;
+            if (Math.hypot(x - cx, y - cy) < cellSize/2) {
+              isDrawing = false;
+              currentColor = null;
+              checkWin();
+              break;
+            }
+          }
         } else {
           // Caminho cruzou, perde vida
           isDrawing = false;
